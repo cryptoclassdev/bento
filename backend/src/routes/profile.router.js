@@ -10,6 +10,7 @@ router.use(authMiddleware);
 router.put('/replace/:username', profileController.setProfileDetails);
 router.put('/displayname/:username', profileController.updateDisplayName);
 router.put('/bio/:username', profileController.updateBio);
+router.put('/theme/:username', profileController.updateTheme);
 router.post('/avatar/:username', profileController.uploadAvatar);
 router.post('/:username', profileController.addProfileObject);
 router.put('/:username', profileController.updateProfileObject);

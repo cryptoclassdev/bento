@@ -62,6 +62,7 @@ const initialState = {
   name: '',
   bio: '',
   avatar: '',
+  theme: 'light',
 };
 
 const profileSlice = createSlice({
@@ -121,6 +122,10 @@ const profileSlice = createSlice({
 
     updateAvatar(state, action) {
       state.avatar = action.payload;
+    },
+
+    updateTheme(state, action) {
+      state.theme = action.payload;
     },
   },
 });

@@ -25,6 +25,9 @@ import AddOtherDetails from '@/components/AddOtherDetails';
 import ImageCard from '@/components/ImageCard';
 import OtherLinkCard from '@/components/OtherLinkCard';
 import TitleBox from '@/components/TitleBox';
+import TokenPriceCard from '@/components/TokenPriceCard';
+import ContractAddressCard from '@/components/ContractAddressCard';
+import DexLinkCard from '@/components/DexLinkCard';
 import { MdOutlineDelete } from 'react-icons/md';
 import NameBio from '@/components/NameBio';
 import { useRouter } from 'next/router';
@@ -32,7 +35,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { axiosWithToken } from '@/utils/axiosjwt';
 import { uiActions } from '@/store/ui-slice';
-import { defaultSocialLinks } from '@/constant';
+import { defaultSocialLinks, chainConfigs, dexConfigs } from '@/constant';
 import { Toaster, toast } from 'react-hot-toast';
 import Head from 'next/head';
 import LogoutIcon from '@/assets/logout.svg';
@@ -76,7 +79,7 @@ export default function Home({ data }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const isFirst = useSelector((state) => state.ui.isfirstTime);
-  const { profileDetails, avatar, name, bio } = useSelector(
+  const { profileDetails, avatar, name, bio, theme } = useSelector(
     (state) => state.profile
   );
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
@@ -87,6 +90,7 @@ export default function Home({ data }) {
   const [avatarSrc, setAvatarSrc] = useState('');
   const [url, setUrl] = useState('');
   const [isUrlOpen, setIsUrlOpen] = useState(false);
+  const [isCryptoMenuOpen, setIsCryptoMenuOpen] = useState(false);
 
   let USERNAME = router.query?.id[0];
 
@@ -105,6 +109,7 @@ export default function Home({ data }) {
         dispatch(profileActions.updateAvatar(profile.avatar));
         dispatch(profileActions.updateDisplayName(profile.displayName));
         dispatch(profileActions.updateBio(profile.bio));
+        dispatch(profileActions.updateTheme(profile.theme || 'light'));
 
         if (isSameUser !== undefined) {
           dispatch(uiActions.setSameUser(isSameUser));
@@ -300,6 +305,62 @@ export default function Home({ data }) {
     );
   };
 
+  const addTokenPrice = async (tokenId, contractAddr, chain) => {
+    const res = await axiosWithToken.post(`${API_URL}/profile/${USERNAME}`, {
+      id: uuidv4(),
+      type: 'tokenPrice',
+      tokenId,
+      contractAddress: contractAddr || '',
+      chain: chain || '',
+      width: 1,
+      height: 1,
+    });
+    dispatch(
+      profileActions.setProfileDetails([
+        ...profileDetails,
+        res.data.addedObject,
+      ])
+    );
+  };
+
+  const addContractAddress = async (address, chain) => {
+    const res = await axiosWithToken.post(`${API_URL}/profile/${USERNAME}`, {
+      id: uuidv4(),
+      type: 'contractAddress',
+      address,
+      chain,
+      width: 2,
+      height: 2,
+    });
+    dispatch(
+      profileActions.setProfileDetails([
+        ...profileDetails,
+        res.data.addedObject,
+      ])
+    );
+  };
+
+  const addDexLink = async (dex, tokenAddress, chain) => {
+    const dexConfig = dexConfigs[dex];
+    const url = dexConfig ? dexConfig.getSwapUrl(tokenAddress) : '';
+    const res = await axiosWithToken.post(`${API_URL}/profile/${USERNAME}`, {
+      id: uuidv4(),
+      type: 'dexLink',
+      dex,
+      tokenAddress,
+      chain,
+      url,
+      width: 2,
+      height: 2,
+    });
+    dispatch(
+      profileActions.setProfileDetails([
+        ...profileDetails,
+        res.data.addedObject,
+      ])
+    );
+  };
+
   const handelLink = async (text) => {
     const url = new URL(text);
 
@@ -429,6 +490,18 @@ export default function Home({ data }) {
     dispatch(uiActions.setSameUser(false));
   };
 
+  const toggleTheme = async () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    dispatch(profileActions.updateTheme(newTheme));
+    try {
+      await axiosWithToken.put(`${API_URL}/profile/theme/${USERNAME}`, {
+        theme: newTheme,
+      });
+    } catch (error) {
+      console.error('Theme update error:', error);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -456,7 +529,7 @@ export default function Home({ data }) {
         />
       </Head>
       <main
-        className={`${inter.className}  overflow-x-hidden flex justify-center ${
+        className={`${inter.className} ${theme === 'dark' ? 'dark' : ''} overflow-x-hidden flex justify-center min-h-screen dark:bg-[#1a1a1a] ${
           isLaptop && 'xl:justify-normal'
         }`}>
         <Toaster />
@@ -597,6 +670,24 @@ export default function Home({ data }) {
                                       isLaptop={isLaptop}
                                     />
                                   )}
+                                {item.type === 'tokenPrice' && (
+                                  <TokenPriceCard
+                                    item={item}
+                                    USERNAME={USERNAME}
+                                  />
+                                )}
+                                {item.type === 'contractAddress' && (
+                                  <ContractAddressCard
+                                    item={item}
+                                    USERNAME={USERNAME}
+                                  />
+                                )}
+                                {item.type === 'dexLink' && (
+                                  <DexLinkCard
+                                    item={item}
+                                    USERNAME={USERNAME}
+                                  />
+                                )}
                                 </div>
                               </div>
                             )}
@@ -633,6 +724,24 @@ export default function Home({ data }) {
                         {item.type === 'title' && (
                           <TitleBox item={item} USERNAME={USERNAME} />
                         )}
+                                {item.type === 'tokenPrice' && (
+                                  <TokenPriceCard
+                                    item={item}
+                                    USERNAME={USERNAME}
+                                  />
+                                )}
+                                {item.type === 'contractAddress' && (
+                                  <ContractAddressCard
+                                    item={item}
+                                    USERNAME={USERNAME}
+                                  />
+                                )}
+                                {item.type === 'dexLink' && (
+                                  <DexLinkCard
+                                    item={item}
+                                    USERNAME={USERNAME}
+                                  />
+                                )}
                       </div>
                     </div>
                   ))}
@@ -643,7 +752,7 @@ export default function Home({ data }) {
         </div>
         {/* Fixed bar */}
         {isSameUser && (
-          <div className="fixed bottom-[2.5rem]  backdrop-blur-lg  bg-blend-multiply  bg-white/50  left-1/2 -translate-x-1/2 p-3 rounded-2xl flex items-center shadow-xl z-[10000] ">
+          <div className="fixed bottom-[2.5rem]  backdrop-blur-lg  bg-blend-multiply  bg-white/50 dark:bg-[#1a1a1a]/80 dark:text-white  left-1/2 -translate-x-1/2 p-3 rounded-2xl flex items-center shadow-xl z-[10000] ">
             <div className="h-[33px] hidden xl:flex rounded-md w-[127px] bg-green-500 text-white  items-center justify-center">
               <button
                 onClick={copyUrlToClipboard}
@@ -743,6 +852,59 @@ export default function Home({ data }) {
                   />
                 </div>
               </div>
+              <div className="w-[32px] h-[32px] flex items-center justify-center cursor-pointer relative">
+                <div
+                  onClick={() => setIsCryptoMenuOpen(!isCryptoMenuOpen)}
+                  className="w-[24px] h-[24px] rounded-md flex items-center justify-center border hover:shadow-xl text-xs font-bold"
+                >
+                  ₿
+                </div>
+                {isCryptoMenuOpen && (
+                  <div className="absolute bottom-[3rem] left-[-4rem] w-[14rem] bg-white dark:bg-[#2a2a2a] border dark:border-gray-700 shadow-lg rounded-lg p-2 flex flex-col gap-1 z-20">
+                    <button
+                      onClick={() => {
+                        const tokenId = prompt('Enter CoinGecko token ID (e.g., bitcoin, ethereum):');
+                        if (tokenId) {
+                          const contractAddr = prompt('Contract address (optional, for DexScreener fallback):') || '';
+                          const chain = prompt('Chain (optional, e.g., ethereum, solana):') || '';
+                          addTokenPrice(tokenId, contractAddr, chain);
+                        }
+                        setIsCryptoMenuOpen(false);
+                      }}
+                      className="text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      Token Price
+                    </button>
+                    <button
+                      onClick={() => {
+                        const address = prompt('Enter contract address:');
+                        if (address) {
+                          const chain = prompt('Select chain (ethereum, solana, base, arbitrum, bsc, polygon):') || 'ethereum';
+                          addContractAddress(address, chain);
+                        }
+                        setIsCryptoMenuOpen(false);
+                      }}
+                      className="text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      Contract Address
+                    </button>
+                    <button
+                      onClick={() => {
+                        const dex = prompt('Select DEX (uniswap, jupiter, pancakeswap, raydium):') || 'uniswap';
+                        const tokenAddress = prompt('Enter token address:');
+                        if (tokenAddress) {
+                          const chain = prompt('Chain (ethereum, solana, bsc):') || 'ethereum';
+                          addDexLink(dex, tokenAddress, chain);
+                        }
+                        setIsCryptoMenuOpen(false);
+                      }}
+                      className="text-left px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                    >
+                      DEX Buy Button
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="mx-4 w-[2px] h-[16px] bg-gray-300 hidden xl:block"></div>
             <div className="h-[33px] w-[104px]  gap-1 hidden xl:flex">
@@ -759,6 +921,24 @@ export default function Home({ data }) {
                   isLaptop ? 'bg-white' : 'bg-black'
                 } flex items-center justify-center rounded-md`}>
                 <Image src={isLaptop ? Mobile : MobileWhite} alt="laptop" />
+              </button>
+            </div>
+            <div className="mx-4 w-[2px] h-[16px] bg-gray-300 hidden xl:block"></div>
+            <div className="px-[10px] rounded h-[33px] flex items-center justify-center">
+              <button
+                onClick={toggleTheme}
+                className="flex items-center justify-center rounded-md w-6 h-6"
+              >
+                {theme === 'dark' ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="5" />
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                )}
               </button>
             </div>
             <div className="mx-4 w-[2px] h-[16px] bg-gray-300 hidden xl:block"></div>

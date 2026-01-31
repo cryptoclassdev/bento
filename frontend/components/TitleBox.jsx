@@ -80,7 +80,7 @@ const TitleBox = ({ item, USERNAME, isLaptop }) => {
     <div
       className={`w-[375px]  ${
         isLaptop && 'xl:w-[820px]'
-      }  rounded-[16px] p-2 relative border border-transparent  group bg-white transition-all duration-200 ease-in-out ${
+      }  rounded-[16px] p-2 relative border border-transparent  group bg-white dark:bg-transparent transition-all duration-200 ease-in-out ${
         isSameUser && 'hover:shadow-lg hover:border-[#e3e3e3]'
       }`}>
       {isSameUser ? (
@@ -91,7 +91,7 @@ const TitleBox = ({ item, USERNAME, isLaptop }) => {
           suppressContentEditableWarning={true}
           className={`${
             isLaptop && 'xl:max-w-[790px]'
-          } xl:min-w-[10rem] max-w-[355px] truncate text-ellipsis focus:text-clip h-[44px] cursor-text w-fit pl-4 pr-8 py-2 text-xl  bg-transparent outline-none rounded-lg transition-all duration-200 ease-in-out text-[#000] font-bold text-[24px] hover:bg-[#f5f5f5]`}
+          } xl:min-w-[10rem] max-w-[355px] truncate text-ellipsis focus:text-clip h-[44px] cursor-text w-fit pl-4 pr-8 py-2 text-xl  bg-transparent outline-none rounded-lg transition-all duration-200 ease-in-out text-[#000] dark:text-white font-bold text-[24px] hover:bg-[#f5f5f5]`}
           placeholder="Title">
           {item.content}
         </div>
@@ -100,7 +100,7 @@ const TitleBox = ({ item, USERNAME, isLaptop }) => {
           ref={titleRef}
           className={`${
             isLaptop && 'xl:max-w-[790px]'
-          } xl:max-w-[355px] min-w-[10rem]  text-ellipsis focus:text-clip h-[44px] cursor-text w-fit pl-4 pr-8 py-2 text-xl  bg-transparent outline-none rounded-lg transition-all duration-200 ease-in-out truncate text-[#000] font-bold text-[24px]  ${
+          } xl:max-w-[355px] min-w-[10rem]  text-ellipsis focus:text-clip h-[44px] cursor-text w-fit pl-4 pr-8 py-2 text-xl  bg-transparent outline-none rounded-lg transition-all duration-200 ease-in-out truncate text-[#000] dark:text-white font-bold text-[24px]  ${
             isSameUser && 'hover:bg-[#f5f5f5]'
           }`}
           placeholder="Title">
@@ -119,7 +119,7 @@ const TitleBox = ({ item, USERNAME, isLaptop }) => {
       {isSameUser && (
         <div
           onClick={handelDelete}
-          className="absolute hidden group-hover:flex  items-center justify-center -top-4 -left-4 w-9 h-9 rounded-full bg-white shadow-lg  cursor-pointer hover:bg-gray-100">
+          className="absolute hidden group-hover:flex  items-center justify-center -top-4 -left-4 w-9 h-9 rounded-full bg-white dark:bg-[#2a2a2a] shadow-lg  cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
           {/* <AiOutlineDelete className="w-5 h-5 text-black" /> */}
           <Image src={DeleteIcon} alt="delete" />
         </div>

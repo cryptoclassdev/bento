@@ -86,7 +86,7 @@ const ImageCard = ({ item, USERNAME }) => {
                 alt="Drag and drop"
                 width={1024}
                 height={1024}
-                className={`h-full w-full object-cover  bg-white rounded-[1.5rem]`}
+                className={`h-full w-full object-cover  bg-white dark:bg-[#2a2a2a] rounded-[1.5rem]`}
               />
             </div>
 

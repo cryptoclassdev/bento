@@ -42,6 +42,13 @@ const addProfileObject = async (req, res) => {
     height,
     hostname,
     link,
+    tokenId,
+    contractAddress,
+    chain,
+    address,
+    dex,
+    tokenAddress,
+    url,
   } = req.body;
 
   const session = await mongoose.startSession();
@@ -84,6 +91,13 @@ const addProfileObject = async (req, res) => {
       height,
       hostname,
       link,
+      tokenId,
+      contractAddress,
+      chain,
+      address,
+      dex,
+      tokenAddress,
+      url,
     };
 
     if (type === 'image' && imgUrl && imgUrl !== 'null') {
@@ -221,6 +235,13 @@ const updateProfileObject = async (req, res) => {
     imgUrl,
     height,
     width,
+    tokenId,
+    contractAddress,
+    chain,
+    address,
+    dex,
+    tokenAddress,
+    url,
   } = req.body;
 
   const session = await mongoose.startSession();
@@ -277,6 +298,13 @@ const updateProfileObject = async (req, res) => {
       width,
       link,
       hostname,
+      tokenId,
+      contractAddress,
+      chain,
+      address,
+      dex,
+      tokenAddress,
+      url,
     };
 
     if (type === 'image' && imgUrl) {
@@ -519,6 +547,63 @@ const updateBio = async (req, res) => {
     await session.abortTransaction();
     session.endSession();
     console.error('Update profile Bio error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const updateTheme = async (req, res) => {
+  let { username } = req.params;
+  username = String(username);
+  const { theme } = req.body;
+
+  if (theme !== 'light' && theme !== 'dark') {
+    return res
+      .status(400)
+      .json({ message: 'Invalid theme. Must be "light" or "dark".' });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    await verifyUsernameMatch(token, username);
+
+    const user = await User.findOne({ username }).session(session);
+
+    if (!user) {
+      console.log('User not found:', username);
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const profile = await Profile.findOne({ user: user._id }).session(session);
+
+    if (!profile) {
+      await session.abortTransaction();
+      session.endSession();
+      return res
+        .status(404)
+        .json({ message: 'Profile not found for the user' });
+    }
+
+    profile.theme = theme;
+    await profile.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    console.log('Theme updated successfully');
+    res
+      .status(200)
+      .json({ message: 'Theme updated successfully', theme });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Update theme error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -780,6 +865,7 @@ module.exports = {
   deleteProfileObject,
   updateDisplayName,
   updateBio,
+  updateTheme,
   uploadAvatar,
   resize,
   removeObjectsOfType,

@@ -65,12 +65,12 @@ const SocialLinkCard = ({ item, USERNAME }) => {
             onBlur={updateUserName}
             contentEditable="true"
             suppressContentEditableWarning={true}
-            className="mt-1 font-bold focus:outline-none p-2 w-full hover:bg-[#f5f5f5] hover:cursor-text rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2">
+            className="mt-1 font-bold focus:outline-none p-2 w-full hover:bg-[#f5f5f5] hover:cursor-text rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2 dark:text-white">
             {item.userName}
           </div>
         ) : (
           <div
-            className={`mt-1 font-bold focus:outline-none p-2 w-full ${
+            className={`mt-1 font-bold focus:outline-none p-2 w-full dark:text-white ${
               isSameUser && 'hover:bg-[#f5f5f5] hover:cursor-text'
             }  rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2`}>
             {item.userName}

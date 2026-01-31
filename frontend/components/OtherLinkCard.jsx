@@ -32,7 +32,7 @@ const OtherLinkCard = ({ item, USERNAME }) => {
       <Link href={item.link || '#'} target="_blank">
         <div className="w-full h-full p-4">
           <div className="px-2 pt-2">
-            <div className="h-10 w-10 p-2 rounded-md flex items-center justify-center border shadow-sm">
+            <div className="h-10 w-10 p-2 rounded-md flex items-center justify-center border dark:border-gray-600 shadow-sm">
               <Image
                 src={item.logo || LinkLogo}
                 width={44}
@@ -45,11 +45,11 @@ const OtherLinkCard = ({ item, USERNAME }) => {
           <div>
             <div
               suppressContentEditableWarning={true}
-              className="mt-1 font-bold focus:outline-none p-2 w-full hover:bg-[#f5f5f5]  rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2">
+              className="mt-1 font-bold focus:outline-none p-2 w-full hover:bg-[#f5f5f5]  rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2 dark:text-white">
               {item.userName || item.baseUrl}
             </div>
           </div>
-          <p className="text-[0.75rem] text-gray-500 line-clamp-2 px-2 leading-4">
+          <p className="text-[0.75rem] text-gray-500 dark:text-gray-400 line-clamp-2 px-2 leading-4">
             {item.hostname}
           </p>
         </div>

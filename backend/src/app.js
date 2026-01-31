@@ -6,6 +6,7 @@ const passport = require('passport');
 const authRouter = require('./routes/auth.router.js');
 const dotenv = require('dotenv');
 const profileRouter = require('./routes/profile.router.js');
+const tokenRouter = require('./routes/token.router.js');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
@@ -89,6 +90,7 @@ app.use(compression());
 // Route handlers
 app.use('/auth', authRouter);
 app.use('/profile', profileRouter);
+app.use('/api/token', tokenRouter);
 
 // Basic route
 app.get('/', (req, res) => {

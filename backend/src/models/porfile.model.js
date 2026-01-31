@@ -18,13 +18,18 @@ const profileSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  theme: {
+    type: String,
+    enum: ['light', 'dark'],
+    default: 'light',
+  },
 
   profiles: [
     {
       type: {
         type: String,
         required: true,
-        enum: ['socialLink', 'text', 'map', 'image', 'title', 'links'],
+        enum: ['socialLink', 'text', 'map', 'image', 'title', 'links', 'tokenPrice', 'contractAddress', 'dexLink'],
       },
       id: {
         type: String,
@@ -113,6 +118,27 @@ const profileSchema = new mongoose.Schema({
       },
       width: {
         type: Number,
+      },
+      tokenId: {
+        type: String,
+      },
+      contractAddress: {
+        type: String,
+      },
+      chain: {
+        type: String,
+      },
+      address: {
+        type: String,
+      },
+      dex: {
+        type: String,
+      },
+      tokenAddress: {
+        type: String,
+      },
+      url: {
+        type: String,
       },
     },
   ],

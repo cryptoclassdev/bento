@@ -152,7 +152,7 @@ const TextBox = ({ item, USERNAME }) => {
               placeholder="Add Note"
               onChange={handleChange}
               value={textareaValue} // Use the separate textarea value
-              className={`w-full h-full  scrollbar-hide focus:outline-none ${
+              className={`w-full h-full  scrollbar-hide focus:outline-none dark:text-white dark:bg-transparent ${
                 isSameUser && 'group-hover:bg-[#f5f5f5]'
               } leading-snug resize-none rounded overflow-y-auto ${
                 (height === 1 || height === 3) && 'line-clamp-5'

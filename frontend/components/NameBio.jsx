@@ -63,14 +63,14 @@ const NameBio = ({ USERNAME, isLaptop }) => {
           suppressContentEditableWarning
           className={`relative tracking-[-2px] text-[32px] ${
             isLaptop && 'xl:text-[44px]'
-          } font-bold focus:outline-none leading-[120%] text-[#565656]`}>
+          } font-bold focus:outline-none leading-[120%] text-[#565656] dark:text-white`}>
           {isNamePlaceholder ? 'Your Name' : name}
         </div>
       ) : (
         <div
           className={`relative tracking-[-2px] text-[32px] ${
             isLaptop && 'xl:text-[44px]'
-          } font-bold focus:outline-none leading-[120%] text-[#565656] ${
+          } font-bold focus:outline-none leading-[120%] text-[#565656] dark:text-white ${
             name.length === 0 && 'hidden'
           }`}>
           {isNamePlaceholder ? 'Your Name' : name}
@@ -86,14 +86,14 @@ const NameBio = ({ USERNAME, isLaptop }) => {
           suppressContentEditableWarning
           className={`mt-3 ${
             isLaptop && 'xl:text-xl'
-          } focus:outline-none relative text-[#565656]`}>
+          } focus:outline-none relative text-[#565656] dark:text-white`}>
           {isBioPlaceholder ? 'Your Bio' : bio}
         </div>
       ) : (
         <div
           className={`mt-3 ${
             isLaptop && 'xl:text-xl'
-          } focus:outline-none relative text-[#565656] ${
+          } focus:outline-none relative text-[#565656] dark:text-white ${
             bio.length === 0 && 'hidden'
           } `}>
           {isBioPlaceholder ? 'Your Bio' : bio}

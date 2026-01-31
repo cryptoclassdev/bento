@@ -92,7 +92,7 @@ const ResizingContainer = ({
           'h-[calc(100vw-2rem)] xs:h-[377px] xl:h-[388px]'
         } ${
           height === 2 && ' h-[65px]'
-        } bg-white relative rounded-[24px] border ${
+        } bg-white dark:bg-[#2a2a2a] dark:border-gray-700 relative rounded-[24px] border ${
           type == 'text' && 'p-3'
         } shadow-lg transition-all duration-500 group `}>
         {children}
@@ -101,7 +101,7 @@ const ResizingContainer = ({
       {isSameUser && (
         <div
           onClick={handelDelete}
-          className="absolute hidden group-hover:flex  items-center justify-center -top-4 -left-4 w-9 h-9 rounded-full bg-white shadow-lg  cursor-pointer hover:bg-gray-100">
+          className="absolute hidden group-hover:flex  items-center justify-center -top-4 -left-4 w-9 h-9 rounded-full bg-white dark:bg-[#2a2a2a] shadow-lg  cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600">
           {/* <AiOutlineDelete className="w-5 h-5 text-black" /> */}
           <Image src={DeleteIcon} alt="delete" />
         </div>
