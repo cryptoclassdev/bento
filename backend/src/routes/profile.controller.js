@@ -35,8 +35,8 @@ const addProfileObject = async (req, res) => {
     userName,
     logo,
     bgColor,
+    isFullUrl,
     content,
-    location,
     imgUrl,
     width,
     height,
@@ -84,8 +84,8 @@ const addProfileObject = async (req, res) => {
       userName,
       logo,
       bgColor,
+      isFullUrl,
       content,
-      location,
       imgUrl,
       width,
       height,
@@ -230,8 +230,8 @@ const updateProfileObject = async (req, res) => {
     hostname,
     logo,
     bgColor,
+    isFullUrl,
     content,
-    location,
     imgUrl,
     height,
     width,
@@ -291,8 +291,8 @@ const updateProfileObject = async (req, res) => {
       userName,
       logo,
       bgColor,
+      isFullUrl,
       content,
-      location,
       imgUrl,
       height,
       width,
@@ -829,10 +829,6 @@ const removeObjectsOfType = async (req, res) => {
           return !(obj.imgUrl === 'null');
         case 'text':
           return !(obj.content === null);
-        case 'map':
-          return !(
-            obj.location.latitude === null && obj.location.longitude === null
-          );
         default:
           return true;
       }

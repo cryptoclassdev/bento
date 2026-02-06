@@ -29,7 +29,7 @@ const profileSchema = new mongoose.Schema({
       type: {
         type: String,
         required: true,
-        enum: ['socialLink', 'text', 'map', 'image', 'title', 'links', 'tokenPrice', 'contractAddress', 'dexLink'],
+        enum: ['socialLink', 'text', 'image', 'title', 'links', 'tokenPrice', 'contractAddress', 'dexLink'],
       },
       id: {
         type: String,
@@ -59,6 +59,10 @@ const profileSchema = new mongoose.Schema({
           return this.type === 'socialLink';
         },
       },
+      isFullUrl: {
+        type: Boolean,
+        default: false,
+      },
 
       hostname: {
         type: String,
@@ -80,31 +84,6 @@ const profileSchema = new mongoose.Schema({
         //   },
         //   message: 'Content is required for text and title types',
         // },
-      },
-      location: {
-        type: {
-          latitude: {
-            type: Number,
-            required: function () {
-              return this.type === 'map';
-            },
-          },
-          longitude: {
-            type: Number,
-            required: function () {
-              return this.type === 'map';
-            },
-          },
-          zoom: {
-            type: Number,
-            required: function () {
-              return this.type === 'map';
-            },
-          },
-        },
-        required: function () {
-          return this.type === 'map';
-        },
       },
       imgUrl: {
         type: String,

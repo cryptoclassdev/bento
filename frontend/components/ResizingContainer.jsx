@@ -2,7 +2,6 @@ import React from 'react';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
 import { profileActions } from '@/store/profile-slice';
-import { BiSearch } from 'react-icons/bi';
 import { axiosWithToken } from '@/utils/axiosjwt';
 import { useSelector } from 'react-redux';
 import DeleteIcon from '@/assets/delete.svg';
@@ -162,19 +161,6 @@ const ResizingContainer = ({
                 width === 5 && height === 5 ? 'border-black' : 'border-white'
               } rounded`}></div>
           </div>
-          {type == 'map' && (
-            <div
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`w-7 h-7 ${
-                isSearchOpen ? 'bg-white' : 'bg-black'
-              } flex items-center justify-center rounded cursor-pointer`}>
-              <BiSearch
-                className={`w-6 h-6   ${
-                  isSearchOpen ? 'text-black' : 'text-white'
-                }`}
-              />
-            </div>
-          )}
         </div>
       )}
     </div>

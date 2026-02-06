@@ -28,9 +28,19 @@ const SocialLinkCard = ({ item, USERNAME }) => {
     setHeight(height);
   };
 
-  let link = item.baseUrl.includes('linkedin')
-    ? `https://${item.baseUrl}.com/in/${item.userName}`
+  let link = item.isFullUrl
+    ? item.userName
     : `https://${item.baseUrl}.com/${item.userName}`;
+
+  const displayText = item.isFullUrl
+    ? (() => {
+        try {
+          return new URL(item.userName).hostname;
+        } catch {
+          return item.userName;
+        }
+      })()
+    : item.userName;
 
   const updateUserName = (e) => {
     if (!isSameUser) {
@@ -60,20 +70,20 @@ const SocialLinkCard = ({ item, USERNAME }) => {
             <Image src={item.logo} width={44} height={44} alt="logo" />
           </div>
         </div>
-        {isSameUser ? (
+        {isSameUser && !item.isFullUrl ? (
           <div
             onBlur={updateUserName}
             contentEditable="true"
             suppressContentEditableWarning={true}
             className="mt-1 font-bold focus:outline-none p-2 w-full hover:bg-[#f5f5f5] hover:cursor-text rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2 dark:text-white">
-            {item.userName}
+            {displayText}
           </div>
         ) : (
           <div
             className={`mt-1 font-bold focus:outline-none p-2 w-full dark:text-white ${
-              isSameUser && 'hover:bg-[#f5f5f5] hover:cursor-text'
+              isSameUser && !item.isFullUrl && 'hover:bg-[#f5f5f5] hover:cursor-text'
             }  rounded-lg py-1 text-[0.875rem]  leading-[1.2rem] max-h-[calc(100%-6rem)]  line-clamp-2`}>
-            {item.userName}
+            {displayText}
           </div>
         )}
 
@@ -81,7 +91,7 @@ const SocialLinkCard = ({ item, USERNAME }) => {
           <button
             className={`absolute bottom-5 h-fit left-5 text-[#f5f5f5]  text-[0.75rem] leading-4 font-bold py-[7px] px-[21px] rounded-md`}
             style={{ backgroundColor: item.bgColor }}>
-            Follow
+            Visit
           </button>
         </Link>
       </div>

@@ -24,6 +24,15 @@ const AddSocialLinkCard = ({
   };
 
   const addLink = async () => {
+    if (link.isFullUrl) {
+      try {
+        new URL(linkValue);
+      } catch {
+        toast.error('Please enter a valid URL (e.g., https://...)');
+        return;
+      }
+    }
+
     const res = await axiosWithToken.post(`${API_URL}/profile/${USERNAME}`, {
       ...link,
       userName: linkValue,
@@ -51,7 +60,7 @@ const AddSocialLinkCard = ({
     dispatch(profileActions.removeItem(link.id));
 
     const res = axiosWithToken.delete(
-      `http://localhost:5000/profile/${USERNAME}/${link.id}`
+      `${API_URL}/profile/${USERNAME}/${link.id}`
     );
 
     console.log(res.data);
@@ -67,6 +76,39 @@ const AddSocialLinkCard = ({
   };
 
   const handelLink = async (paste) => {
+    if (link.isFullUrl) {
+      try {
+        new URL(paste);
+      } catch {
+        toast.error('Invalid URL provided!');
+        return;
+      }
+
+      const res = await axiosWithToken.post(`${API_URL}/profile/${USERNAME}`, {
+        ...link,
+        userName: paste,
+        isAdded: true,
+        height: 1,
+        width: 1,
+      });
+
+      dispatch(
+        profileActions.updateSocialLinks({
+          ...res.data.addedObject,
+          isAdded: true,
+        })
+      );
+
+      dispatch(
+        profileActions.addItem({
+          ...res.data.addedObject,
+          isAdded: true,
+        })
+      );
+      setLinkValue('');
+      return;
+    }
+
     const url = new URL(paste);
 
     const { hostname } = url;
@@ -82,7 +124,7 @@ const AddSocialLinkCard = ({
 
     const baseUrlData = defaultSocialLinks[baseUrlKey];
 
-    if (link.id !== baseUrlData.baseUrl) {
+    if (!baseUrlData || link.id !== baseUrlData.baseUrl) {
       toast.error('Invalid link provided!');
       return;
     }
@@ -129,6 +171,12 @@ const AddSocialLinkCard = ({
 
   useEffect(() => {}, [link, linkValue, isAdded]);
 
+  const displayValue = isAdded
+    ? link.isFullUrl
+      ? link.userName
+      : `@${link.userName}`
+    : linkValue;
+
   return (
     <div className="flex items-center gap-3 mt-3 w-fit z-0 group">
       {!isLogo && (
@@ -166,21 +214,22 @@ const AddSocialLinkCard = ({
                 fill="#fff"></path>
             </svg>
           </div>
-        ) : (
+        ) : !link.isFullUrl ? (
           <span
             className={`text-[16px]  ${
               isAdded ? 'text-white' : 'text-black'
             } `}>
             @
           </span>
-        )}
+        ) : null}
 
         <input
           type="text"
           readOnly={isAdded}
-          value={`${isAdded ? `@${link.userName}` : linkValue}`}
+          value={displayValue}
           onPaste={handelOnPaste}
           onChange={handelChange}
+          placeholder={link.isFullUrl ? 'https://...' : 'username'}
           contentEditable="true"
           suppressContentEditableWarning={true}
           style={{ backgroundColor: isAdded && bgColor }}

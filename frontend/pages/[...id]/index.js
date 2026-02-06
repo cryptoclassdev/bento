@@ -7,14 +7,12 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import LinkLogo from '@/assets/link.svg';
 import ImageLogo from '@/assets/image.png';
 import TextLogo from '@/assets/text.png';
-import MapLogo from '@/assets/map.png';
 import TitleLogo from '@/assets/title.svg';
 import Laptop from '@/assets/laptop.svg';
 import Mobile from '@/assets/mobile.svg';
 import MobileWhite from '@/assets/mobilewhite.svg';
 import LaptopBlack from '@/assets/laptopblack.svg';
 import Avatar from '@/components/Avatar';
-import MapboxMap from '@/components/MapBox';
 import AddSocialLinks from '@/components/AddSocialLinks';
 import { motion, AnimatePresence } from 'framer-motion';
 import GotoProfile from '@/components/GotoProfile';
@@ -63,13 +61,6 @@ const InitialData = [
     content: null,
     width: 1,
     height: 1,
-  },
-  {
-    id: uuidv4(),
-    type: 'map',
-    location: { latitude: null, longitude: null, zoom: 4 },
-    width: 5,
-    height: 5,
   },
 ];
 
@@ -142,9 +133,7 @@ export default function Home({ data }) {
       // Check for null or undefined values in the relevant properties
       if (
         (item.type === 'text' && item.content == null) ||
-        (item.type === 'image' && item.imgUrl == null) ||
-        (item.type === 'map' &&
-          (!item.location?.latitude || !item.location?.longitude))
+        (item.type === 'image' && item.imgUrl == null)
       ) {
         suggestionsFound = true;
         break;
@@ -237,23 +226,6 @@ export default function Home({ data }) {
       content: '',
       width: 1,
       height: 1,
-    });
-
-    dispatch(
-      profileActions.setProfileDetails([
-        ...profileDetails,
-        res.data.addedObject,
-      ])
-    );
-  };
-
-  const addMap = async () => {
-    const res = await axiosWithToken.post(`${API_URL}/profile/${USERNAME}`, {
-      id: uuidv4(),
-      type: 'map',
-      location: { latitude: 20.5937, longitude: 78.9629, zoom: 4 },
-      width: 5,
-      height: 5,
     });
 
     dispatch(
@@ -651,12 +623,6 @@ export default function Home({ data }) {
                                   {item.type === 'text' && (
                                     <TextBox item={item} USERNAME={USERNAME} />
                                   )}
-                                  {item.type === 'map' && (
-                                    <MapboxMap
-                                      item={item}
-                                      USERNAME={USERNAME}
-                                    />
-                                  )}
                                   {item.type === 'links' && (
                                     <OtherLinkCard
                                       item={item}
@@ -714,9 +680,6 @@ export default function Home({ data }) {
                         )}
                         {item.type === 'text' && (
                           <TextBox item={item} USERNAME={USERNAME} />
-                        )}
-                        {item.type === 'map' && (
-                          <MapboxMap item={item} USERNAME={USERNAME} />
                         )}
                         {item.type === 'links' && (
                           <OtherLinkCard item={item} USERNAME={USERNAME} />
@@ -826,17 +789,6 @@ export default function Home({ data }) {
                   <Image
                     src={TextLogo}
                     className="rounded-md object-cover w-[24px] h-[24px]"
-                    alt="text"
-                  />
-                </div>
-              </div>
-              <div
-                onClick={addMap}
-                className="w-[32px] h-[32px] flex items-center justify-center cursor-pointer">
-                <div className=" rounded-md flex items-center justify-center border hover:shadow-xl">
-                  <Image
-                    src={MapLogo}
-                    className="object-cover rounded-md w-[24px] h-[24px]"
                     alt="text"
                   />
                 </div>
