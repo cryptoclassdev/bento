@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Bento Clone is a full-stack **link-in-bio / customizable profile** platform (similar to bento.me). Users create accounts, build a personal profile page with draggable widgets (social links, text notes, images, maps, titles, external links, crypto widgets), and share a public URL. The app supports light/dark themes, avatar uploads, and drag-and-drop widget reordering.
+Bento Clone is a full-stack **link-in-bio / customizable profile** platform tailored for **early-stage crypto products**. Projects create accounts, build a profile page with draggable widgets (social links, text notes, images, titles, external links, crypto widgets), and share a public URL. The app supports light/dark themes, avatar uploads, and drag-and-drop widget reordering.
 
 **Live:** https://bento-clone-app.vercel.app
 
@@ -14,7 +14,6 @@ Bento Clone is a full-stack **link-in-bio / customizable profile** platform (sim
 | Backend  | Node.js 16, Express.js, Mongoose/MongoDB                     |
 | Auth     | Passport (Google OAuth + Local), JWT (stored in cookies)      |
 | Storage  | Cloudinary (images/avatars)                                   |
-| Maps     | Mapbox GL                                                     |
 | Crypto   | CoinGecko API (DexScreener fallback) for token prices         |
 | Deploy   | Vercel (frontend), Render (backend)                           |
 
@@ -47,7 +46,7 @@ npm run lint       # ESLint (next/core-web-vitals)
 
 **Backend `.env`** — `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `CLIENT_URL`, `MONGO_URL`, `PORT`, `JWT_SECRET`, `SESSION_SECRET`, `COOKIE_KEY_1`, `COOKIE_KEY_2`, `ORIGIN_1`–`ORIGIN_4`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_FROM`, `NODE_ENV`
 
-**Frontend `.env`** — `NEXT_PUBLIC_MAPBOX_TOKEN`, `NEXT_PUBLIC_API_URL`
+**Frontend `.env`** — `NEXT_PUBLIC_API_URL`
 
 ---
 
@@ -93,7 +92,8 @@ bento-clone/
     │   └── user.js
     ├── components/                # flat directory, all .jsx files
     │   ├── Avatar.jsx
-    │   ├── SocialLinkCard.jsx
+    │   ├── SocialLinkCard.jsx     # dual-mode: username-based & full-URL links
+    │   ├── AddSocialLinkCard.jsx  # add/edit social links with URL validation
     │   ├── TokenPriceCard.jsx
     │   ├── ContractAddressCard.jsx
     │   ├── DexLinkCard.jsx
@@ -121,9 +121,32 @@ Profile data is fetched in `useEffect` inside `pages/[...id]/index.js`, **not** 
 
 ### Widget Storage Model
 
-All widgets (social links, text, map, image, title, links, crypto) are stored in a single `profiles` array on the Profile document. Each widget has a `type` enum field. This is a **polymorphic embedded array** — different widget types share the same array with type-specific fields.
+All widgets (social links, text, image, title, links, crypto) are stored in a single `profiles` array on the Profile document. Each widget has a `type` enum field. This is a **polymorphic embedded array** — different widget types share the same array with type-specific fields.
 
-Widget types: `socialLink`, `text`, `map`, `image`, `title`, `links`, `tokenPrice`, `contractAddress`, `dexLink`
+Active widget types: `socialLink`, `text`, `image`, `title`, `links`, `tokenPrice`, `contractAddress`, `dexLink`
+
+> **Note:** `map` remains in the Mongoose enum for backward compatibility with existing database documents, but is no longer created or rendered by the frontend. The map widget, MapBox component, and all Mapbox dependencies have been removed.
+
+### Social Links — Dual-Mode (`isFullUrl` Flag)
+
+Social links support two modes controlled by the `isFullUrl` boolean on each link object:
+
+- **`isFullUrl: false`** (username-based) — X, Github. URL constructed as `https://{baseUrl}.com/{userName}`.
+- **`isFullUrl: true`** (full-URL) — Docs, Official Site, Blog, Token, Brand Kit. The `userName` field stores the complete URL directly.
+
+The 7 social link types (defined in `frontend/constant/index.js`):
+
+| ID | Label | Mode | Color |
+|----|-------|------|-------|
+| `x` | X | username | `#000000` |
+| `docs` | Docs | full URL | `#4A5568` |
+| `github` | Github | username | `#181717` |
+| `officialsite` | Official Site | full URL | `#2B6CB0` |
+| `blog` | Blog | full URL | `#38A169` |
+| `token` | Token | full URL | `#D69E2E` |
+| `brandkit` | Brand Kit | full URL | `#805AD5` |
+
+Icons use inline SVG data URIs (except Github which uses a Cloudinary-hosted SVG). Button text is "Visit" (not "Follow").
 
 ### Authorization Pattern
 
@@ -199,6 +222,8 @@ Token prices from CoinGecko (with DexScreener fallback) are cached in-memory on 
 - Use `axiosWithToken` from `@/utils/axiosjwt` for authenticated API calls
 - Dispatch Redux actions directly from components (no thunks)
 - Check `verifyUsernameMatch` in controllers to ensure users can only modify their own profile
+- Include `isFullUrl` when adding or updating social link objects in the backend
+- Use the `isFullUrl` flag to branch URL construction and input behavior in social link components
 
 ### Don't
 
@@ -211,3 +236,5 @@ Token prices from CoinGecko (with DexScreener fallback) are cached in-memory on 
 - Don't use `getServerSideProps` for data fetching on the profile page — it only does `resetServerContext()`
 - Don't bypass `authMiddleware` for routes that modify user data
 - Don't use inline styles — use Tailwind classes instead
+- Don't remove `'map'` from the Mongoose schema enum — existing database documents may contain map entries, and removing it causes 500 errors on save
+- Don't re-add map widget functionality (MapBox component, Mapbox dependencies) — it has been intentionally removed
