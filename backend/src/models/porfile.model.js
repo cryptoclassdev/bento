@@ -29,7 +29,7 @@ const profileSchema = new mongoose.Schema({
       type: {
         type: String,
         required: true,
-        enum: ['socialLink', 'text', 'image', 'title', 'links', 'tokenPrice', 'contractAddress', 'dexLink'],
+        enum: ['socialLink', 'text', 'map', 'image', 'title', 'links', 'tokenPrice', 'contractAddress', 'dexLink'],
       },
       id: {
         type: String,
